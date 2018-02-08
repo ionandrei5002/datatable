@@ -2,8 +2,27 @@ cmake_minimum_required(VERSION 2.8)
 
 project(datatable)
 
-set(HEADERS types.h viewer_bytebuffer.h viewer_value.h column.h schema.h table.h reader.h writer.h)
-set(SOURCES ${HEADERS} main.cpp viewer_bytebuffer.cpp viewer_value.cpp column.cpp)
+set(HEADERS
+    types.h
+    viewers/bytebuffer.h
+    viewers/value.h
+    column.h
+    schema.h
+    table.h
+    reader.h
+    writer.h
+    values/value.h
+    values/bytebuffer.h
+    builders.h
+)
+set(SOURCES ${HEADERS}
+    main.cpp
+    viewers/bytebuffer.cpp
+    viewers/value.cpp
+    column.cpp
+    values/bytebuffer.cpp
+    values/value.cpp
+)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 

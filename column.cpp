@@ -38,7 +38,7 @@ void TypedColumn<T>::putValue(ViewerValue* value)
 {
     TypedViewerValue<T> _value = *reinterpret_cast<TypedViewerValue<T>*>(value);
 
-    ViewerByteBuffer buffer = _value.getValue();
+    ViewerByteBuffer buffer = _value.get();
     for(uint64_t i = 0; i < buffer._size; i++)
         _column.push_back(buffer._buffer[i]);
 
@@ -54,7 +54,7 @@ ViewerValue* TypedColumn<T>::getValue(size_t pos)
     char* _value_position = const_cast<char*>(&_column[pos * _size]);
     ViewerByteBuffer buffer(_size, _value_position);
 
-    _typedvalue.setValue(buffer);
+    _typedvalue.set(buffer);
 
     return &_typedvalue;
 }
@@ -62,7 +62,10 @@ ViewerValue* TypedColumn<T>::getValue(size_t pos)
 void TypedColumn<StringType>::putValue(ViewerValue* value)
 {
     TypedViewerValue<StringType> _value = *reinterpret_cast<TypedViewerValue<StringType>*>(value);
-    ViewerByteBuffer buffer = _value.getValue();
+
+    std::cout << std::string (_value.get()._buffer, _value.get()._size) << std::endl;
+
+    ViewerByteBuffer buffer = _value.get();
     uint8_t* size = reinterpret_cast<uint8_t*>(&buffer._size);
 
     uint64_t last_index = _column.size();
@@ -72,19 +75,20 @@ void TypedColumn<StringType>::putValue(ViewerValue* value)
     for(uint64_t i = 0; i < buffer._size; i++)
         _column.push_back(buffer._buffer[i]);
 
-    _position.push_back(last_index);
+    this->_position.push_back(last_index);
 
     nb_elements++;
 }
 
 ViewerValue* TypedColumn<StringType>::getValue(size_t pos)
 {
-    uint64_t buffer_position = _position[pos];
+    uint64_t buffer_position = this->_position[pos];
+
     uint64_t _size = *reinterpret_cast<uint64_t*>(&_column[buffer_position]);
     char* _value_position = const_cast<char*>(&_column[buffer_position + sizeof(_size)]);
     ViewerByteBuffer buffer(_size, _value_position);
 
-    _typedvalue.setValue(buffer);
+    _typedvalue.set(buffer);
 
     return &_typedvalue;
 }

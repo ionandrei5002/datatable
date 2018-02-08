@@ -2,27 +2,48 @@
 #define TYPES
 
 #include <memory>
-#include "viewer_bytebuffer.h"
+#include "values/bytebuffer.h"
 
 struct Type
 {
     enum type
     {
-        INT8 = 1,
-        INT16 = 2,
-        INT32 = 3,
-        INT64 = 4,
-        FLOAT = 5,
-        DOUBLE = 6,
-        STRING = 7
+        INT8 = 0,
+        INT16 = 1,
+        INT32 = 2,
+        INT64 = 3,
+        FLOAT = 4,
+        DOUBLE = 5,
+        STRING = 6
     };
 };
 
 struct Encoding {
     enum type {
-        PLAIN = 1,
-        DICTIONARY = 2
+        PLAIN = 0,
+        DICTIONARY = 1
     };
+};
+
+template<typename T>
+struct enum_traits
+{
+};
+
+template<>
+struct enum_traits<Type>
+{
+    static constexpr uint32_t min_value = 0;
+    static constexpr uint32_t max_value = 6;
+    static constexpr uint32_t elements = 7;
+};
+
+template<>
+struct enum_traits<Encoding>
+{
+    static constexpr uint32_t min_value = 0;
+    static constexpr uint32_t max_value = 1;
+    static constexpr uint32_t elements = 2;
 };
 
 template<int TYPE>
@@ -81,9 +102,9 @@ struct type_traits<Type::DOUBLE>
 template<>
 struct type_traits<Type::STRING>
 {
-    typedef ViewerByteBuffer value_type;
+    typedef ByteBuffer value_type;
     static constexpr char* name = const_cast<char*>("STRING");
-    static constexpr int value_byte_size = sizeof(ViewerByteBuffer);
+    static constexpr int value_byte_size = sizeof(ByteBuffer);
 };
 
 template<Type::type TYPE>

@@ -3,17 +3,24 @@
 #include "schema.h"
 #include "table.h"
 
+#include "builders.h"
+
 int main()
 {
     Schema schema;
-    schema.push(Node(std::string("a1"), Type::INT64, Encoding::PLAIN, false))
-            .push(Node(std::string("a2"), Type::STRING, Encoding::DICTIONARY, true));
+    schema.push(Node(std::string("udid"), Type::INT64, Encoding::PLAIN, false))
+            .push(Node(std::string("date"), Type::STRING, Encoding::PLAIN, false));
 
-    std::cout << schema;
+    Table table(std::string("iron_blade_dau"), schema);
+    table.initColumns();
 
-    Table table(std::string("test"), schema);
+    std::string inFile("/home/andrei/Desktop/IronBladeDau.csv");
+    table.readCsv(inFile);
 
-    std::cout << table;
+    std::cout << "table size: " << table.size() << std::endl;
+
+    std::string outFile("/home/andrei/Desktop/output.csv");
+    table.writeCsv(outFile);
 
     return 0;
 }

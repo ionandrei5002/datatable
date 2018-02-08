@@ -48,6 +48,10 @@ private:
     std::vector<Node> _nodes;
 public:
     Schema():_nodes(std::vector<Node>()) {}
+    uint64_t size()
+    {
+        return this->_nodes.size();
+    }
     Schema& push(Node node)
     {
         for(uint64_t i = 0; i < _nodes.size(); i++)

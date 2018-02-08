@@ -5,7 +5,7 @@
 #include <set>
 
 #include "types.h"
-#include "viewer_value.h"
+#include "viewers/value.h"
 
 class Column
 {
@@ -91,5 +91,6 @@ template class TypedColumn<Int64Type>;
 template class TypedColumn<FloatType>;
 template class TypedColumn<DoubleType>;
 template class TypedColumn<StringType>;
+
 
 #endif // COLUMN_H
