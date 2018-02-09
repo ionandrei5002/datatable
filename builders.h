@@ -25,7 +25,7 @@ std::shared_ptr<Column> ColumnBuilder(Node& node)
     decision_table.push_back(std::make_shared<TypedColumn<Int64Type>>(TypedColumn<Int64Type>()));
     decision_table.push_back(std::make_shared<TypedColumn<FloatType>>(TypedColumn<FloatType>()));
     decision_table.push_back(std::make_shared<TypedColumn<DoubleType>>(TypedColumn<DoubleType>()));
-    decision_table.push_back(std::make_shared<TypedColumn<StringType>>(TypedColumn<StringType>()));
+    decision_table.push_back(std::make_shared<DictionaryTypedColumn<StringType>>(DictionaryTypedColumn<StringType>()));
 
     return decision_table.at(type);
 }

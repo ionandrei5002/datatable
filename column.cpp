@@ -90,3 +90,31 @@ ViewerValue* TypedColumn<StringType>::getValue(size_t pos)
 
     return &_typedvalue;
 }
+
+void DictionaryTypedColumn<StringType>::putValue(ViewerValue* value)
+{
+    ViewerByteBuffer buffer = value->get();
+    std::string str(buffer._buffer, buffer._size);
+
+    auto pos = this->_column.find(str);
+    if (pos == this->_column.end())
+    {
+        this->_column.insert(str);
+        pos = this->_column.find(str);
+    }
+
+    this->_position.emplace_back(const_cast<std::string*>(&*pos));
+
+    nb_elements++;
+}
+
+ViewerValue* DictionaryTypedColumn<StringType>::getValue(size_t pos)
+{
+    std::string* buffer_position = this->_position[pos];
+
+    ViewerByteBuffer buffer(buffer_position->size(), const_cast<char*>(buffer_position->data()));
+
+    _typedvalue.set(buffer);
+
+    return &_typedvalue;
+}

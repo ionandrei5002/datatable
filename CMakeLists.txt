@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8)
 
 project(datatable)
 
+include_directories("/usr/include/gtest")
+
 set(HEADERS
     types.h
     viewers/bytebuffer.h
@@ -14,6 +16,10 @@ set(HEADERS
     values/value.h
     values/bytebuffer.h
     builders.h
+    comparators/comparator.h
+
+    tests/viewertest.h
+    tests/comparatortest.h
 )
 set(SOURCES ${HEADERS}
     main.cpp
@@ -25,6 +31,8 @@ set(SOURCES ${HEADERS}
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
+
+target_link_libraries(${PROJECT_NAME} pthread gtest gtest_main)
 
 target_compile_options(${PROJECT_NAME}
   PRIVATE

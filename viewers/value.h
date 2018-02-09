@@ -30,25 +30,25 @@ public:
     void set(ViewerByteBuffer buff) override;
     ViewerByteBuffer get() override;
     void print(std::ostream& output) const override;
-    bool operator <(const TypedViewerValue<T>& val)
-    {
-        return _value < val._value;
-    }
-    friend bool operator <(const TypedViewerValue<T>& lv, const TypedViewerValue<T>& rv)
-    {
-        return lv._value < rv._value;
-    }
-    bool operator ==(const TypedViewerValue<T>& val)
-    {
-        return !(_value < val._value) && !(val._value < _value);
-    }
-    bool operator !=(const TypedViewerValue<T>& val)
-    {
-        return !this->operator ==(val);
-    }
     Type::type getType() override
     {
         return T::type_num;
+    }
+    bool operator <(const TypedViewerValue<T>& other)
+    {
+        return _value < other._value;
+    }
+    bool operator ==(const TypedViewerValue<T>& other)
+    {
+        return !(_value < other._value) && !(other._value < _value);
+    }
+    bool operator >(const TypedViewerValue<T>& other)
+    {
+        return _value > other._value;
+    }
+    bool operator !=(const TypedViewerValue<T>& other)
+    {
+        return !(this->operator ==(other));
     }
 };
 
@@ -63,22 +63,6 @@ public:
     void set(ViewerByteBuffer buff) override;
     ViewerByteBuffer get() override;
     void print(std::ostream& output) const override;
-    bool operator <(const NullableTypedViewerValue<T>& val)
-    {
-        return _value < val._value;
-    }
-    friend bool operator <(const NullableTypedViewerValue<T>& lv, const NullableTypedViewerValue<T>& rv)
-    {
-        return lv._value < rv._value;
-    }
-    bool operator ==(const NullableTypedViewerValue<T>& val)
-    {
-        return !(_value < val._value) && !(val._value < _value);
-    }
-    bool operator !=(const NullableTypedViewerValue<T>& val)
-    {
-        return !this->operator ==(val);
-    }
     Type::type getType() override
     {
         return T::type_num;
@@ -96,28 +80,33 @@ public:
     void set(ViewerByteBuffer buff) override;
     ViewerByteBuffer get() override;
     void print(std::ostream& output) const override;
-    bool operator <(const TypedViewerValue<StringType>& val)
-    {
-        return std::experimental::string_view(reinterpret_cast<char*>(this->_value._buffer), this->_value._size)
-                < std::experimental::string_view(reinterpret_cast<char*>(val._value._buffer), val._value._size);
-    }
-    friend bool operator <(const TypedViewerValue<StringType>& lv, const TypedViewerValue<StringType>& rv)
-    {
-        return std::experimental::string_view(reinterpret_cast<char*>(lv._value._buffer), lv._value._size)
-                < std::experimental::string_view(reinterpret_cast<char*>(rv._value._buffer), rv._value._size);
-    }
-    bool operator ==(const TypedViewerValue<StringType>& val)
-    {
-        return std::experimental::string_view(reinterpret_cast<char*>(this->_value._buffer), this->_value._size)
-                == std::experimental::string_view(reinterpret_cast<char*>(val._value._buffer), val._value._size);
-    }
-    bool operator !=(const TypedViewerValue<StringType>& val)
-    {
-        return !this->operator ==(val);
-    }
     Type::type getType() override
     {
         return StringType::type_num;
+    }
+    bool operator <(const TypedViewerValue<StringType>& other)
+    {
+        return
+                std::experimental::string_view(_value._buffer, _value._size)
+                < std::experimental::string_view(other._value._buffer, other._value._size);
+    }
+    bool operator ==(const TypedViewerValue<StringType>& other)
+    {
+        return
+                std::experimental::string_view(_value._buffer, _value._size)
+                == std::experimental::string_view(other._value._buffer, other._value._size);
+    }
+    bool operator >(const TypedViewerValue<StringType>& other)
+    {
+        return
+                std::experimental::string_view(_value._buffer, _value._size)
+                > std::experimental::string_view(other._value._buffer, other._value._size);
+    }
+    bool operator !=(const TypedViewerValue<StringType>& other)
+    {
+        return
+                std::experimental::string_view(_value._buffer, _value._size)
+                != std::experimental::string_view(other._value._buffer, other._value._size);
     }
 };
 
@@ -132,25 +121,6 @@ public:
     void set(ViewerByteBuffer buff) override;
     ViewerByteBuffer get() override;
     void print(std::ostream& output) const override;
-    bool operator <(const NullableTypedViewerValue<StringType>& val)
-    {
-        return std::experimental::string_view(reinterpret_cast<char*>(this->_value._buffer), this->_value._size)
-                < std::experimental::string_view(reinterpret_cast<char*>(val._value._buffer), val._value._size);
-    }
-    friend bool operator <(const NullableTypedViewerValue<StringType>& lv, const NullableTypedViewerValue<StringType>& rv)
-    {
-        return std::experimental::string_view(reinterpret_cast<char*>(lv._value._buffer), lv._value._size)
-                < std::experimental::string_view(reinterpret_cast<char*>(rv._value._buffer), rv._value._size);
-    }
-    bool operator ==(const NullableTypedViewerValue<StringType>& val)
-    {
-        return std::experimental::string_view(reinterpret_cast<char*>(this->_value._buffer), this->_value._size)
-                == std::experimental::string_view(reinterpret_cast<char*>(val._value._buffer), val._value._size);
-    }
-    bool operator !=(const NullableTypedViewerValue<StringType>& val)
-    {
-        return !this->operator ==(val);
-    }
     Type::type getType() override
     {
         return StringType::type_num;
