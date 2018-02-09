@@ -81,35 +81,36 @@ void NullableTypedViewerValue<StringType>::set(ViewerByteBuffer buff) {}
 
 
 template<typename T>
-void TypedViewerValue<T>::cast(const std::string& value)
+void TypedViewerValue<T>::cast(const std::string* value)
 {
-    this->_value = static_cast<type>(std::stoi(value));
+    this->_value = static_cast<type>(std::stoi(*value));
 }
 
 template<>
-void TypedViewerValue<Int64Type>::cast(const std::string& value)
+void TypedViewerValue<Int64Type>::cast(const std::string* value)
 {
-    this->_value = static_cast<type>(std::stol(value));
+    this->_value = static_cast<type>(std::stol(*value));
 }
 
 template<>
-void TypedViewerValue<FloatType>::cast(const std::string& value)
+void TypedViewerValue<FloatType>::cast(const std::string* value)
 {
-    this->_value = static_cast<type>(std::stof(value));
+    this->_value = static_cast<type>(std::stof(*value));
 }
 
 template<>
-void TypedViewerValue<DoubleType>::cast(const std::string& value)
+void TypedViewerValue<DoubleType>::cast(const std::string* value)
 {
-    this->_value = static_cast<type>(std::stod(value));
+    this->_value = static_cast<type>(std::stod(*value));
 }
 
-void TypedViewerValue<StringType>::cast(const std::string& value)
+void TypedViewerValue<StringType>::cast(const std::string* value)
 {
-    this->_value = ViewerByteBuffer(value.size(), const_cast<char*>(value.data()));
+    ViewerByteBuffer buff = ViewerByteBuffer(value->size(), const_cast<char*>(value->data()));
+    this->_value = buff;
 }
 
 template<typename T>
-void NullableTypedViewerValue<T>::cast(const std::string& value) {}
+void NullableTypedViewerValue<T>::cast(const std::string* value) {}
 
-void NullableTypedViewerValue<StringType>::cast(const std::string& value) {}
+void NullableTypedViewerValue<StringType>::cast(const std::string* value) {}

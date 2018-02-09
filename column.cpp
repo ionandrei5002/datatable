@@ -63,8 +63,6 @@ void TypedColumn<StringType>::putValue(ViewerValue* value)
 {
     TypedViewerValue<StringType> _value = *reinterpret_cast<TypedViewerValue<StringType>*>(value);
 
-    std::cout << std::string (_value.get()._buffer, _value.get()._size) << std::endl;
-
     ViewerByteBuffer buffer = _value.get();
     uint8_t* size = reinterpret_cast<uint8_t*>(&buffer._size);
 

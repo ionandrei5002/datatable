@@ -73,7 +73,7 @@ public:
             for(size_t i = 0; i < _primitives.size(); i++)
             {
                 try {
-                    std::string value = piece.at(i);
+                    std::string* value = &piece.at(i);
                     _primitives.at(i)->cast(value);
                 } catch(std::exception& ex)
                 {
@@ -87,7 +87,8 @@ public:
             {
                 for(size_t i = 0; i < _primitives.size(); i++)
                 {
-                    _columns.at(i)->putValue(_primitives.at(i).get());
+                    ViewerValue* value = _primitives.at(i).get();
+                    _columns.at(i)->putValue(value);
                 }
 
                 (*_size)++;

@@ -11,7 +11,7 @@ class ViewerValue
 {
 public:
     virtual ~ViewerValue() {}
-    virtual void cast(const std::string& value) = 0;
+    virtual void cast(const std::string* value) = 0;
     virtual void set(ViewerByteBuffer buff) = 0;
     virtual ViewerByteBuffer get() = 0;
     friend std::ostream& operator <<(std::ostream& output, const ViewerValue& val);
@@ -26,7 +26,7 @@ private:
     typedef typename T::c_type type;
 public:
     TypedViewerValue():_value(type(0)){}
-    void cast(const std::string& value) override;
+    void cast(const std::string* value) override;
     void set(ViewerByteBuffer buff) override;
     ViewerByteBuffer get() override;
     void print(std::ostream& output) const override;
@@ -59,7 +59,7 @@ private:
     typedef typename T::c_type type;
 public:
     NullableTypedViewerValue():_value(type(0)){}
-    void cast(const std::string& value) override;
+    void cast(const std::string* value) override;
     void set(ViewerByteBuffer buff) override;
     ViewerByteBuffer get() override;
     void print(std::ostream& output) const override;
@@ -92,7 +92,7 @@ private:
     typedef ViewerByteBuffer type;
 public:
     TypedViewerValue():_value(type()){}
-    void cast(const std::string& value) override;
+    void cast(const std::string* value) override;
     void set(ViewerByteBuffer buff) override;
     ViewerByteBuffer get() override;
     void print(std::ostream& output) const override;
@@ -128,7 +128,7 @@ private:
     typedef ViewerByteBuffer type;
 public:
     NullableTypedViewerValue():_value(type()){}
-    void cast(const std::string& value) override;
+    void cast(const std::string* value) override;
     void set(ViewerByteBuffer buff) override;
     ViewerByteBuffer get() override;
     void print(std::ostream& output) const override;
