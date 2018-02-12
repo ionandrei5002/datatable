@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
 project(datatable)
 
 include_directories("/usr/include/gtest")
@@ -36,12 +38,14 @@ target_link_libraries(${PROJECT_NAME} pthread gtest gtest_main)
 
 target_compile_options(${PROJECT_NAME}
   PRIVATE
-    -flto
+#    -fstack-protector-all
+#    -flto
     -march=native
     -std=c++17
-    -O
-#    -O3
-    -g3
+#    -O
+    -O3
+#    -g3
+#    -g
     -m64
     -Werror
     -Wno-unused-parameter

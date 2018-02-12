@@ -106,8 +106,10 @@ void TypedViewerValue<DoubleType>::cast(const std::string* value)
 
 void TypedViewerValue<StringType>::cast(const std::string* value)
 {
+    TypedViewerValue<StringType> str;
     ViewerByteBuffer buff = ViewerByteBuffer(value->size(), const_cast<char*>(value->data()));
-    this->_value = buff;
+    str.set(buff);
+    this->_value = str.get();
 }
 
 template<typename T>

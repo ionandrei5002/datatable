@@ -17,13 +17,29 @@ int main(int argc, char **argv)
 //    return RUN_ALL_TESTS();
 
     Schema schema;
-    schema.push(Node(std::string("udid"), Type::INT64, Encoding::PLAIN, false))
-            .push(Node(std::string("date"), Type::STRING, Encoding::DICTIONARY, false));
+    schema.push(Node(std::string("a1"), Type::STRING, Encoding::PLAIN, false))
+            .push(Node(std::string("a2"), Type::STRING, Encoding::PLAIN, false))
+            .push(Node(std::string("a3"), Type::INT32, Encoding::PLAIN, false))
+            .push(Node(std::string("a4"), Type::INT32, Encoding::PLAIN, false))
+            .push(Node(std::string("a5"), Type::INT32, Encoding::PLAIN, false))
+            .push(Node(std::string("a6"), Type::INT32, Encoding::PLAIN, false))
+            .push(Node(std::string("a7"), Type::INT32, Encoding::PLAIN, false))
+            .push(Node(std::string("a8"), Type::INT32, Encoding::PLAIN, false))
+            .push(Node(std::string("a9"), Type::INT32, Encoding::PLAIN, false))
+            .push(Node(std::string("a10"), Type::INT32, Encoding::PLAIN, false))
+            .push(Node(std::string("a11"), Type::STRING, Encoding::PLAIN, false))
+            .push(Node(std::string("a12"), Type::STRING, Encoding::PLAIN, false))
+            .push(Node(std::string("a13"), Type::STRING, Encoding::PLAIN, false))
+            .push(Node(std::string("a14"), Type::INT32, Encoding::PLAIN, false))
+            .push(Node(std::string("a15"), Type::STRING, Encoding::PLAIN, false))
+            .push(Node(std::string("a16"), Type::STRING, Encoding::PLAIN, false))
+            .push(Node(std::string("a17"), Type::STRING, Encoding::PLAIN, false))
+            .push(Node(std::string("a18"), Type::INT32, Encoding::PLAIN, false));
 
-    Table table(std::string("mc5_dau"), schema);
+    Table table(std::string("dataset"), schema);
     table.initColumns();
 
-    std::string inFile("/home/andrei/Desktop/MC5Lau.csv");
+    std::string inFile("/home/andrei/Desktop/dataset.csv");
     table.readCsv(inFile);
 
     std::cout << "table size: " << table.size() << std::endl;
