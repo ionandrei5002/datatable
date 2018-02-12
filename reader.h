@@ -90,7 +90,6 @@ public:
                     ViewerValue* value = _primitives.at(i).get();
                     _columns.at(i)->putValue(value);
                 }
-
                 (*_size)++;
             }
 

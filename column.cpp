@@ -48,6 +48,11 @@ void TypedColumn<T>::putValue(ViewerValue* value)
 template<typename T>
 ViewerValue* TypedColumn<T>::getValue(size_t pos)
 {
+    if(pos >= nb_elements)
+    {
+        return nullptr;
+    }
+
     typedef typename T::c_type type;
     uint64_t _size = sizeof(type);
 
@@ -80,6 +85,11 @@ void TypedColumn<StringType>::putValue(ViewerValue* value)
 
 ViewerValue* TypedColumn<StringType>::getValue(size_t pos)
 {
+    if(pos >= nb_elements)
+    {
+        return nullptr;
+    }
+
     uint64_t buffer_position = this->_position[pos];
 
     uint64_t _size = *reinterpret_cast<uint64_t*>(&_column[buffer_position]);
@@ -110,6 +120,11 @@ void DictionaryTypedColumn<StringType>::putValue(ViewerValue* value)
 
 ViewerValue* DictionaryTypedColumn<StringType>::getValue(size_t pos)
 {
+    if (pos >= nb_elements)
+    {
+        return nullptr;
+    }
+
     std::string* buffer_position = this->_position[pos];
 
     ViewerByteBuffer buffer(buffer_position->size(), const_cast<char*>(buffer_position->data()));

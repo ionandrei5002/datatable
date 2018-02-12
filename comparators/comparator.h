@@ -2,43 +2,65 @@
 #define COMPARATOR_H
 
 #include "../types.h"
-#include "../viewers/value.h"
+#include "../column.h"
 
-class Comparator
-{
+class Comparator {
 public:
+    Comparator(Column* column, Comparator* children):_sort(Sort(column, children)) {}
     virtual ~Comparator() {}
+    virtual void set(ViewerValue* lv) = 0;
+    virtual bool operator<(ViewerValue* rv) = 0;
+    virtual bool operator>(ViewerValue* rv) = 0;
+    virtual bool operator==(ViewerValue* rv) = 0;
+    virtual bool operator!=(ViewerValue* rv) = 0;
+    virtual bool operator()(ViewerValue* lv, ViewerValue* rv) = 0;
+    struct Sort
+    {
+    private:
+        Column* _column = nullptr;
+        Comparator* _children = nullptr;
+    public:
+        Sort(Column* column, Comparator* children):_column(column),_children(children) {}
+        bool operator()(uint64_t lv, uint64_t rv)
+        {
+            ViewerValue* vlv = _column->getValue(lv);
+            ViewerValue* vrv = _column->getValue(rv);
+            return _children->operator ()(vlv, vrv);
+        }
+    } _sort;
 };
+
 template<typename T>
-class TypedComparator
+class TypedComparator: public Comparator
 {
 private:
-    TypedViewerValue<T> _lv;
+    ViewerValue* _lv;
 public:
-    TypedComparator() {}
-    void set(const TypedViewerValue<T>& lv)
+    TypedComparator(Column* column):Comparator(column, this) {}
+    void set(ViewerValue* lv) override
     {
         _lv = lv;
     }
-    bool operator<(const TypedViewerValue<T>& rv)
+    bool operator<(ViewerValue* rv) override
     {
-        return _lv < rv;
+        return (*static_cast<TypedViewerValue<T>*>(_lv)) < (*static_cast<TypedViewerValue<T>*>(rv));
     }
-    bool operator>(const TypedViewerValue<T>& rv)
+    bool operator>(ViewerValue* rv) override
     {
-        return _lv > rv;
+        return (*static_cast<TypedViewerValue<T>*>(_lv)) > (*static_cast<TypedViewerValue<T>*>(rv));
     }
-    bool operator==(const TypedViewerValue<T>& rv)
+    bool operator==(ViewerValue* rv) override
     {
-        return _lv == rv;
+        return (*static_cast<TypedViewerValue<T>*>(_lv)) == (*static_cast<TypedViewerValue<T>*>(rv));
     }
-    bool operator!=(const TypedViewerValue<T>& rv)
+    bool operator!=(ViewerValue* rv) override
     {
-        return _lv != rv;
+        return (*static_cast<TypedViewerValue<T>*>(_lv)) != (*static_cast<TypedViewerValue<T>*>(rv));
     }
-    bool operator()(TypedViewerValue<T>& lv, TypedViewerValue<T>& rv)
+    bool operator()(ViewerValue* lv, ViewerValue* rv) override
     {
-        return lv < rv;
+        std::cout << *lv << " " << *rv << std::endl;
+        return (*static_cast<TypedViewerValue<T>*>(lv)) < (*static_cast<TypedViewerValue<T>*>(rv));
     }
 };
 

@@ -18,8 +18,9 @@ private:
     Schema _schema;
     std::vector<std::shared_ptr<Column>> _columns;
     uint64_t _size = 0;
+    std::vector<uint64_t> _order;
 public:
-    Table(std::string name, Schema schema):_name(name),_schema(schema) {}
+    Table(std::string name, Schema schema):_name(name),_schema(schema),_order(std::vector<uint64_t>()) {}
     friend std::ostream& operator <<(std::ostream& out, const Table& table)
     {
         out << "table " << table._name << "\n" << table._schema;
@@ -46,6 +47,11 @@ public:
         _reader->initPrimitives();
         _reader->printPrimitives();
         _reader->read(this->_columns, &this->_size);
+
+        for(uint64_t rec = 0; rec < _size; rec++)
+        {
+            _order.push_back(rec);
+        }
 
         delete _reader;
         _reader = nullptr;

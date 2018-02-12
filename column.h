@@ -7,6 +7,8 @@
 #include "types.h"
 #include "viewers/value.h"
 
+#include "iterators/iterator.h"
+
 class Column
 {
 protected:   
@@ -28,6 +30,7 @@ private:
     TypedViewerValue<T> _typedvalue;
     Type::type _type = T::type_num;
 public:
+    using iterator = ColumnIterator<T>;
     TypedColumn()
         :Column::Column(),
           _column(std::vector<char>()),
@@ -35,6 +38,15 @@ public:
     Type::type getType() override { return _type; }
     void putValue(ViewerValue* value) override;
     ViewerValue* getValue(size_t pos) override;
+    iterator begin() const
+    {
+        return ColumnIterator<T>(0, const_cast<TypedColumn<T>*>(this));
+    }
+
+    iterator end() const
+    {
+        return ColumnIterator<T>(nb_elements, const_cast<TypedColumn<T>*>(this));
+    }
 };
 
 template<>
@@ -46,6 +58,7 @@ private:
     TypedViewerValue<StringType> _typedvalue;
     Type::type _type = StringType::type_num;
 public:
+    using iterator = ColumnIterator<StringType>;
     TypedColumn()
         :Column::Column(),
           _column(std::vector<char>()),
@@ -54,6 +67,15 @@ public:
     Type::type getType() override { return _type; }
     void putValue(ViewerValue* value) override;
     ViewerValue* getValue(size_t pos) override;
+    iterator begin() const
+    {
+        return ColumnIterator<StringType>(0, const_cast<TypedColumn<StringType>*>(this));
+    }
+
+    iterator end() const
+    {
+        return ColumnIterator<StringType>(nb_elements, const_cast<TypedColumn<StringType>*>(this));
+    }
 };
 
 template<typename T>

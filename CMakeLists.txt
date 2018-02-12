@@ -19,6 +19,7 @@ set(HEADERS
     values/bytebuffer.h
     builders.h
     comparators/comparator.h
+    iterators/iterator.h
 
     tests/viewertest.h
     tests/comparatortest.h
