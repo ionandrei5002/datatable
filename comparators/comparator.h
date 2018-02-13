@@ -6,25 +6,61 @@
 
 class Comparator {
 public:
-    Comparator(Column* column, Comparator* children):_sort(Sort(column, children)) {}
+    Comparator() = delete;
+    Comparator(Column* column):_sort(Sort(column, this)) {}
+    Comparator(const Comparator& ot):_sort(Sort(ot._sort._column, ot._sort._children)) {}
+    Comparator& operator=(const Comparator& ot)
+    {
+        this->_sort = Sort(ot._sort._column, ot._sort._children);
+        return *this;
+    }
+    Comparator(Comparator&& ot):_sort(Sort(ot._sort._column, ot._sort._children)) {}
+    Comparator& operator=(Comparator&& ot) = delete;
     virtual ~Comparator() {}
-    virtual void set(ViewerValue* lv) = 0;
-    virtual bool operator<(ViewerValue* rv) = 0;
-    virtual bool operator>(ViewerValue* rv) = 0;
-    virtual bool operator==(ViewerValue* rv) = 0;
-    virtual bool operator!=(ViewerValue* rv) = 0;
-    virtual bool operator()(ViewerValue* lv, ViewerValue* rv) = 0;
+    virtual Type::type getType() = 0;
+    virtual void set(ViewerByteBuffer lv) = 0;
+    virtual bool operator<(ViewerByteBuffer& rv) = 0;
+    virtual bool operator>(ViewerByteBuffer& rv) = 0;
+    virtual bool operator==(ViewerByteBuffer& rv) = 0;
+    virtual bool operator!=(ViewerByteBuffer& rv) = 0;
+    virtual bool operator()(const ViewerByteBuffer& lv, const ViewerByteBuffer& rv) = 0;
     struct Sort
     {
-    private:
+    public:
         Column* _column = nullptr;
         Comparator* _children = nullptr;
     public:
+        Sort() = delete;
         Sort(Column* column, Comparator* children):_column(column),_children(children) {}
-        bool operator()(uint64_t lv, uint64_t rv)
+        Sort(const Sort& ot)
         {
-            ViewerValue* vlv = _column->getValue(lv);
-            ViewerValue* vrv = _column->getValue(rv);
+            _column =  ot._column;
+            _children = ot._children;
+        }
+        Sort& operator=(const Sort& ot)
+        {
+            _column =  ot._column;
+            _children = ot._children;
+
+            return *this;
+        }
+        Sort(Sort&& ot)
+        {
+            _column =  ot._column;
+            _children = ot._children;
+        }
+        Sort& operator=(Sort&& ot)
+        {
+            _column =  ot._column;
+            _children = ot._children;
+
+            return *this;
+        }
+        bool operator()(const uint64_t lv, const uint64_t rv)
+        {
+            ViewerByteBuffer vlv = _column->getValue(lv);
+            ViewerByteBuffer vrv = _column->getValue(rv);
+
             return _children->operator ()(vlv, vrv);
         }
     } _sort;
@@ -34,33 +70,69 @@ template<typename T>
 class TypedComparator: public Comparator
 {
 private:
-    ViewerValue* _lv;
+    ViewerByteBuffer _lv;
 public:
-    TypedComparator(Column* column):Comparator(column, this) {}
-    void set(ViewerValue* lv) override
+    TypedComparator() = delete;
+    TypedComparator(Column* column):Comparator(column) {}
+    TypedComparator(const TypedComparator<T>& oth):Comparator(oth._sort._column) {}
+    TypedComparator& operator=(const TypedComparator<T>& oth) = delete;
+    Type::type getType() override
+    {
+        return T::type_num;
+    }
+    void set(ViewerByteBuffer lv) override
     {
         _lv = lv;
     }
-    bool operator<(ViewerValue* rv) override
+    bool operator<(ViewerByteBuffer& rv) override
     {
-        return (*static_cast<TypedViewerValue<T>*>(_lv)) < (*static_cast<TypedViewerValue<T>*>(rv));
+        TypedViewerValue<T> tlv;
+        tlv.set(_lv);
+
+        TypedViewerValue<T> trv;
+        trv.set(rv);
+
+        return tlv < trv;
     }
-    bool operator>(ViewerValue* rv) override
+    bool operator>(ViewerByteBuffer& rv) override
     {
-        return (*static_cast<TypedViewerValue<T>*>(_lv)) > (*static_cast<TypedViewerValue<T>*>(rv));
+        TypedViewerValue<T> tlv;
+        tlv.set(_lv);
+
+        TypedViewerValue<T> trv;
+        trv.set(rv);
+
+        return tlv > trv;
     }
-    bool operator==(ViewerValue* rv) override
+    bool operator==(ViewerByteBuffer& rv) override
     {
-        return (*static_cast<TypedViewerValue<T>*>(_lv)) == (*static_cast<TypedViewerValue<T>*>(rv));
+        TypedViewerValue<T> tlv;
+        tlv.set(_lv);
+
+        TypedViewerValue<T> trv;
+        trv.set(rv);
+
+        return tlv == trv;
     }
-    bool operator!=(ViewerValue* rv) override
+    bool operator!=(ViewerByteBuffer& rv) override
     {
-        return (*static_cast<TypedViewerValue<T>*>(_lv)) != (*static_cast<TypedViewerValue<T>*>(rv));
+        TypedViewerValue<T> tlv;
+        tlv.set(_lv);
+
+        TypedViewerValue<T> trv;
+        trv.set(rv);
+
+        return tlv != trv;
     }
-    bool operator()(ViewerValue* lv, ViewerValue* rv) override
+    bool operator()(const ViewerByteBuffer& lv, const ViewerByteBuffer& rv) override
     {
-        std::cout << *lv << " " << *rv << std::endl;
-        return (*static_cast<TypedViewerValue<T>*>(lv)) < (*static_cast<TypedViewerValue<T>*>(rv));
+        TypedViewerValue<T> tlv;
+        TypedViewerValue<T> trv;
+
+        tlv.set(lv);
+        trv.set(rv);
+
+        return tlv < trv;
     }
 };
 

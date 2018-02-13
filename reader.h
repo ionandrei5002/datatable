@@ -87,7 +87,7 @@ public:
             {
                 for(size_t i = 0; i < _primitives.size(); i++)
                 {
-                    ViewerValue* value = _primitives.at(i).get();
+                    ViewerByteBuffer value = _primitives.at(i)->get();
                     _columns.at(i)->putValue(value);
                 }
                 (*_size)++;

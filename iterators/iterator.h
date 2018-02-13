@@ -26,7 +26,7 @@ public:
     inline ColumnIterator& operator+=(difference_type rhs) {_current += rhs; return *this;}
     inline ColumnIterator& operator-=(difference_type rhs) {_current -= rhs; return *this;}
     inline reference operator*() const {return *static_cast<TypedViewerValue<T>*>(_column->getValue(_current));}
-    inline pointer operator->() const {return static_cast<TypedViewerValue<T>*>(_column->getValue(_current));;}
+    inline pointer operator->() const {return static_cast<TypedViewerValue<T>*>(_column->getValue(_current));}
     inline reference operator[](difference_type rhs) const {return *static_cast<TypedViewerValue<T>*>(_column->getValue(rhs));}
 
     inline ColumnIterator& operator++() {++_current; return *this;}

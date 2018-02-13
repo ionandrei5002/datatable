@@ -23,6 +23,7 @@ set(HEADERS
 
     tests/viewertest.h
     tests/comparatortest.h
+    tests/columntest.h
 )
 set(SOURCES ${HEADERS}
     main.cpp

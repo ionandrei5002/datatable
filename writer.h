@@ -10,7 +10,7 @@ public:
     virtual ~Writer() {}
     virtual void initPrimitives() = 0;
     virtual void printPrimitives() = 0;
-    virtual void write(std::vector<std::shared_ptr<Column>>& _columns, uint64_t* _size) = 0;
+    virtual void write(std::vector<std::shared_ptr<Column>>& _columns, std::vector<uint64_t>& _order) = 0;
 };
 
 class CsvWriter: public Writer {
@@ -45,7 +45,7 @@ public:
             std::cout << std::endl;
         }
     }
-    void write(std::vector<std::shared_ptr<Column>>& _columns, uint64_t* _size) override
+    void write(std::vector<std::shared_ptr<Column>>& _columns, std::vector<uint64_t>& _order) override
     {
         std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
 
@@ -54,15 +54,19 @@ public:
         std::ofstream out(this->_file);
         uint64_t columns = _primitives.size();
 
-        for(uint64_t i = 0; i < (*_size); i++)
+        for(uint64_t i : _order)
         {
             for(uint64_t j = 0; j < columns - 1; j++)
             {
-                ViewerValue* value = _columns[j]->getValue(i);
-                out << (*value) << ",";
+                ViewerByteBuffer value = _columns[j]->getValue(i);
+                ViewerValue* typed = _primitives.at(j).get();
+                typed->set(value);
+                out << *typed << ",";
             }
-            ViewerValue* value = _columns[columns - 1]->getValue(i);
-            out << (*value) << std::endl;
+            ViewerByteBuffer value = _columns[columns - 1]->getValue(i);
+            ViewerValue* typed = _primitives.at(columns - 1).get();
+            typed->set(value);
+            out << *typed << std::endl;
         }
 
         out.close();

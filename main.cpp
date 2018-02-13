@@ -5,16 +5,17 @@
 
 #include "builders.h"
 
-#include "comparators/comparator.h"
+//#include "comparators/comparator.h"
 
-#include "gtest.h"
-#include "tests/viewertest.h"
-#include "tests/comparatortest.h"
+//#include "gtest.h"
+//#include "tests/viewertest.h"
+//#include "tests/comparatortest.h"
+//#include "tests/columntest.h"
 
 int main(int argc, char **argv)
 {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+//    ::testing::InitGoogleTest(&argc, argv);
+//    return RUN_ALL_TESTS();
 
     Schema schema;
     schema.push(Node(std::string("a1"), Type::INT64, Encoding::PLAIN, false))
@@ -41,10 +42,12 @@ int main(int argc, char **argv)
     Table table(std::string("dataset"), schema);
     table.initColumns();
 
-    std::string inFile("/home/andrei/Desktop/IronBladeLau.csv");
+    std::string inFile("/home/andrei/Desktop/MC5Lau.csv");
     table.readCsv(inFile);
 
     std::cout << "table size: " << table.size() << std::endl;
+
+    table.sortTable(std::vector<uint64_t>({0,1}));
 
     std::string outFile("/home/andrei/Desktop/output.csv");
     table.writeCsv(outFile);

@@ -16,9 +16,8 @@ protected:
 public:
     Column():nb_elements(0){}
     virtual ~Column(){}
-    static std::unique_ptr<Column> factory(Type::type type);
-    virtual void putValue(ViewerValue* value) = 0;
-    virtual ViewerValue* getValue(size_t pos) = 0;
+    virtual void putValue(ViewerByteBuffer value) = 0;
+    virtual ViewerByteBuffer getValue(size_t pos) = 0;
     virtual Type::type getType() = 0;
 };
 
@@ -36,8 +35,8 @@ public:
           _column(std::vector<char>()),
           _typedvalue(TypedViewerValue<T>()) {}
     Type::type getType() override { return _type; }
-    void putValue(ViewerValue* value) override;
-    ViewerValue* getValue(size_t pos) override;
+    void putValue(ViewerByteBuffer value) override;
+    ViewerByteBuffer getValue(size_t pos) override;
     iterator begin() const
     {
         return ColumnIterator<T>(0, const_cast<TypedColumn<T>*>(this));
@@ -65,8 +64,8 @@ public:
           _position(std::vector<uint64_t>()),
           _typedvalue(TypedViewerValue<StringType>()) {}
     Type::type getType() override { return _type; }
-    void putValue(ViewerValue* value) override;
-    ViewerValue* getValue(size_t pos) override;
+    void putValue(ViewerByteBuffer value) override;
+    ViewerByteBuffer getValue(size_t pos) override;
     iterator begin() const
     {
         return ColumnIterator<StringType>(0, const_cast<TypedColumn<StringType>*>(this));
@@ -93,8 +92,8 @@ public:
           _nullable(std::vector<uint8_t>()),
           _typedvalue(TypedViewerValue<T>()) {}
     Type::type getType() override { return _type; }
-    void putValue(ViewerValue* value) override;
-    ViewerValue* getValue(size_t pos) override;
+    void putValue(ViewerByteBuffer value) override;
+    ViewerByteBuffer getValue(size_t pos) override;
 };
 
 template<>
@@ -113,8 +112,8 @@ public:
           _nullable(std::vector<uint8_t>()),
           _typedvalue(TypedViewerValue<StringType>()) {}
     Type::type getType() override { return _type; }
-    void putValue(ViewerValue* value) override;
-    ViewerValue* getValue(size_t pos) override;
+    void putValue(ViewerByteBuffer value) override;
+    ViewerByteBuffer getValue(size_t pos) override;
 };
 
 template<typename T>
@@ -132,8 +131,8 @@ public:
           _position(std::vector<std::string*>()),
           _typedvalue(TypedViewerValue<T>()) {}
     Type::type getType() override { return _type; }
-    void putValue(ViewerValue* value) override {}
-    ViewerValue* getValue(size_t pos) override {return nullptr;}
+    void putValue(ViewerByteBuffer value) override {}
+    ViewerByteBuffer getValue(size_t pos) override {return nullptr;}
 };
 
 template<>
@@ -151,8 +150,8 @@ public:
           _position(std::vector<std::string*>()),
           _typedvalue(TypedViewerValue<StringType>()) {}
     Type::type getType() override { return _type; }
-    void putValue(ViewerValue* value) override;
-    ViewerValue* getValue(size_t pos) override;
+    void putValue(ViewerByteBuffer value) override;
+    ViewerByteBuffer getValue(size_t pos) override;
 };
 
 template class TypedColumn<Int8Type>;

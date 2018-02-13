@@ -61,10 +61,39 @@ public:
         _writer = new CsvWriter(file, this->_schema);
         _writer->initPrimitives();
         _writer->printPrimitives();
-        _writer->write(this->_columns, &this->_size);
+        _writer->write(this->_columns, this->_order);
 
         delete _writer;
         _writer = nullptr;
+    }
+    void sortTable(std::vector<std::string> columns)
+    {
+        std::vector<uint64_t> cols;
+        for(auto it = columns.begin(); it != columns.end(); ++it)
+        {
+            cols.push_back(_schema.position(*it));
+        }
+
+        this->sortTable(cols);
+    }
+    void sortTable(std::vector<uint64_t> columns)
+    {
+        std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
+
+        start = std::chrono::high_resolution_clock::now();
+
+        for(auto it = columns.rbegin(); it != columns.rend(); ++it)
+        {
+            uint64_t i = *it;
+            Node node = this->_schema.peek(i);
+            std::shared_ptr<Comparator> comp = ComparatorBuilder(this->_columns.at(i).get(), node);
+            std::stable_sort(_order.begin(), _order.end(), comp->_sort);
+        }
+
+        end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed_time = end - start;
+
+        std::cout << "sort duration = " << elapsed_time.count() << "s" << std::endl;
     }
 };
 

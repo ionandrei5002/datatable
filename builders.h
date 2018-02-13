@@ -4,14 +4,14 @@
 #include <memory>
 
 #include "types.h"
-#include "values/value.h"
 #include "viewers/value.h"
 #include "schema.h"
 #include "column.h"
+#include "comparators/comparator.h"
 
-std::shared_ptr<Value> PrimitiveValueBuilder(Node& node);
 std::shared_ptr<Column> ColumnBuilder(Node& node);
 std::shared_ptr<ViewerValue> ViewerValueBuilder(Node& node);
+std::shared_ptr<Comparator> ComparatorBuilder(Column* column, Node& node);
 
 std::shared_ptr<Column> ColumnBuilder(Node& node)
 {
@@ -28,58 +28,6 @@ std::shared_ptr<Column> ColumnBuilder(Node& node)
     decision_table.push_back(std::make_shared<TypedColumn<StringType>>(TypedColumn<StringType>()));
 
     return decision_table.at(type);
-}
-
-std::shared_ptr<Value> PrimitiveValueBuilder(Node& node)
-{
-    Type::type type = node.getType();
-    bool isNullable = node.isNullable();
-
-    std::vector<std::vector<std::shared_ptr<Value>>> decision_table;
-    decision_table.push_back(
-                std::vector<std::shared_ptr<Value>>({
-                                                        std::make_shared<TypedValue<Int8Type>>(TypedValue<Int8Type>()),
-                                                        std::make_shared<NullableTypedValue<Int8Type>>(NullableTypedValue<Int8Type>())
-                                                    })
-                );
-    decision_table.push_back(
-                std::vector<std::shared_ptr<Value>>({
-                                                        std::make_shared<TypedValue<Int16Type>>(TypedValue<Int16Type>()),
-                                                        std::make_shared<NullableTypedValue<Int16Type>>(NullableTypedValue<Int16Type>())
-                                                    })
-                );
-    decision_table.push_back(
-                std::vector<std::shared_ptr<Value>>({
-                                                        std::make_shared<TypedValue<Int32Type>>(TypedValue<Int32Type>()),
-                                                        std::make_shared<NullableTypedValue<Int32Type>>(NullableTypedValue<Int32Type>())
-                                                    })
-                );
-    decision_table.push_back(
-                std::vector<std::shared_ptr<Value>>({
-                                                        std::make_shared<TypedValue<Int64Type>>(TypedValue<Int64Type>()),
-                                                        std::make_shared<NullableTypedValue<Int64Type>>(NullableTypedValue<Int64Type>())
-                                                    })
-                );
-    decision_table.push_back(
-                std::vector<std::shared_ptr<Value>>({
-                                                        std::make_shared<TypedValue<FloatType>>(TypedValue<FloatType>()),
-                                                        std::make_shared<NullableTypedValue<FloatType>>(NullableTypedValue<FloatType>())
-                                                    })
-                );
-    decision_table.push_back(
-                std::vector<std::shared_ptr<Value>>({
-                                                        std::make_shared<TypedValue<DoubleType>>(TypedValue<DoubleType>()),
-                                                        std::make_shared<NullableTypedValue<DoubleType>>(NullableTypedValue<DoubleType>())
-                                                    })
-                );
-    decision_table.push_back(
-                std::vector<std::shared_ptr<Value>>({
-                                                        std::make_shared<TypedValue<StringType>>(TypedValue<StringType>()),
-                                                        std::make_shared<NullableTypedValue<StringType>>(NullableTypedValue<StringType>())
-                                                    })
-                );
-
-    return decision_table.at(type).at(isNullable);
 }
 
 std::shared_ptr<ViewerValue> ViewerValueBuilder(Node& node)
@@ -132,6 +80,22 @@ std::shared_ptr<ViewerValue> ViewerValueBuilder(Node& node)
                 );
 
     return decision_table.at(type).at(isNullable);
+}
+
+std::shared_ptr<Comparator> ComparatorBuilder(Column* column, Node &node)
+{
+    Type::type type = node.getType();
+
+    std::vector<std::shared_ptr<Comparator>> decision_table;
+    decision_table.push_back(std::make_shared<TypedComparator<Int8Type>>(TypedComparator<Int8Type>(column)));
+    decision_table.push_back(std::make_shared<TypedComparator<Int16Type>>(TypedComparator<Int16Type>(column)));
+    decision_table.push_back(std::make_shared<TypedComparator<Int32Type>>(TypedComparator<Int32Type>(column)));
+    decision_table.push_back(std::make_shared<TypedComparator<Int64Type>>(TypedComparator<Int64Type>(column)));
+    decision_table.push_back(std::make_shared<TypedComparator<FloatType>>(TypedComparator<FloatType>(column)));
+    decision_table.push_back(std::make_shared<TypedComparator<DoubleType>>(TypedComparator<DoubleType>(column)));
+    decision_table.push_back(std::make_shared<TypedComparator<StringType>>(TypedComparator<StringType>(column)));
+
+    return decision_table.at(type);
 }
 
 #endif // BUILDERS_H
